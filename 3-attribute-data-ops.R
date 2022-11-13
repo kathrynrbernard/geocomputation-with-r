@@ -142,3 +142,90 @@ data(us_states)
 data(us_states_df)
 
 # E1.
+us_states_names <- select(us_states, NAME)
+class(us_states_names)
+
+# E2. 
+select(us_states, c(total_pop_10, total_pop_15))
+
+# E3.
+midwest <- filter(us_states, REGION == "Midwest")
+plot(midwest)
+
+west <- filter(us_states, REGION == "West" &
+               as.numeric(AREA) <= 250000 &
+                 total_pop_15 > 5000000)
+plot(west)
+
+south <- filter(us_states, REGION == "South" &
+                  (as.numeric(AREA) > 150000 |
+                  total_pop_15 > 7000000))
+plot(south)
+
+# E4. 
+sum(us_states$total_pop_15)
+min(us_states$total_pop_15)
+max(us_states$total_pop_15)
+
+# E5.
+group_by(us_states, REGION) %>% count()
+
+# E6.
+group_by(us_states, REGION) %>% summarize(total = sum(total_pop_15),
+                                          min = min(total_pop_15),
+                                          max = max(total_pop_15))
+
+# E7. 
+colnames(us_states)
+colnames(us_states_df)
+
+join <- left_join(us_states, us_states_df, by = c("NAME" = "state"))
+class(join)
+
+# E8.
+dplyr::anti_join(us_states_df, us_states, by = c("state" = "NAME"))
+
+# E9.
+# population density = population/area
+us_states$pop_density_15 <- us_states$total_pop_15/us_states$AREA
+us_states$pop_density_10 <- us_states$total_pop_10/us_states$AREA
+# us_states |> mutate(pop_dens_15 = total_pop_15 / area)
+# us_states |> mutate(pop_dens_10 = total_pop_10 / area)
+
+# E10.
+us_states$pop_den_dif <- us_states$pop_density_15-us_states$pop_density_10
+# us_states |> mutate(pop_dens_dif = total_pop_15 - total_pop_10)
+plot(us_states)
+
+# E11.
+colnames(us_states) <- tolower(colnames(us_states))
+
+# E12.
+us_states_sel <- cbind(select(us_states, geometry), select(us_states_df,median_income_15))
+
+# E13.
+us_states_df %>% mutate(pov_dif = poverty_level_15 - poverty_level_10)
+# todo - percentage
+
+# E14.
+
+# E15.
+rast <- rast(nrows = 9, ncols = 9, resolution = 0.5, 
+             xmin = -1.5, xmax = 1.5, ymin = -1.5, ymax = 1.5,
+             vals = 1:81)
+
+new_raster = rast(nrows = 9, ncols = 9, resolution = 0.5, 
+                  xmin = -2.25, xmax = 2.25, ymin = -2.25, ymax = 2.25,
+                  vals = 1:81)
+rast[1] # upper left
+rast[9] # upper right
+rast[]
+
+# E16.
+summary(grain)
+
+# E17.
+path  <- system.file("raster/dem.tif", package = "spDataLarge")
+dem <- rast(path)
+hist(dem)
+boxplot(dem)
